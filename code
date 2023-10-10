@@ -1,0 +1,58 @@
+
+import pandas as pd
+
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+
+import win32com.client as win32
+
+import os
+
+#lendo arquivo excel
+caminho_planilha = 'dados.xlsx'
+planilha_excel = pd.read_excel(caminho_planilha)
+#caminho do diretorio dos recibos.pdfs
+caminho_recibo = r'C:\DIRETORIO_PDFS'
+
+for index, row in planilha_excel.iterrows():
+    #gerando recibo em pdf
+    pdf_file = canvas.Canvas(f'recibo_atualizado{index}.pdf')
+
+    pdf_file.setFont('Helvetica-Bold', 12)
+
+    #inserir logo e assinatura
+    pdf_file.drawImage("logo_bronx_cabecalho.png", 0, 700, width=2*inch, height=2*inch)
+
+    pdf_file.drawImage("assinatura_bronx.jpg", 150, 350, width=3*inch, height=2*inch)
+
+    # Acessando as informações da planilha
+    pdf_file.drawString(200, 775 - index, f"Recibo de {row['Recibo']}")
+    pdf_file.drawString(125, 675 - index, f"Nome: {row['Nome']}")
+    pdf_file.drawString(125, 625 - index, f"CNPJ: {row['CNPJ']}")
+    pdf_file.drawString(125, 575 - index, f"Data: {row['Data']}")
+    pdf_file.drawString(125, 525 - index, f"Valor: R$ {row['Valor']},00")
+    pdf_file.save()
+
+for indice, row in planilha_excel.iterrows():
+
+    #buscar email na planilha
+    email_receiver = row['email']
+
+    #funções para acesso ao outlook
+    outlook = win32.Dispatch("Outlook.Application")
+    message = outlook.CreateItem(0)
+    message.To = email_receiver
+
+    
+    numero_recibo = indice
+    pdf_file = (f'recibo_atualizado{indice}.pdf')
+
+    pdf_path = os.path.join(caminho_recibo, pdf_file)
+
+    if os.path.exists(pdf_path):
+        message.Subject = "Recibo"
+        message.Body = "Olá Parceiro, tudo bem?\nSegue o Recibo Referente..."
+        attachment = message.Attachments.Add(pdf_path)
+        message.Send()
+    else:
+        print(f'Arquivo PDF Não encontrado para {email_receiver}: {pdf_file}')
