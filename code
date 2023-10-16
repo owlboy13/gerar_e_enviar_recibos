@@ -1,57 +1,76 @@
-
 import pandas as pd
-
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
-
 import win32com.client as win32
-
 import os
 
 #lendo arquivo excel
 caminho_planilha = 'dados.xlsx'
 planilha_excel = pd.read_excel(caminho_planilha)
 #caminho do diretorio dos recibos.pdfs
-caminho_recibo = r'C:\DIRETORIO_PDFS'
+caminho_recibo = r'CAMINHO ONDE FICARA OS RECIBOS DEPOIS DE GERAR-LOS'
 
+#loop para ler planilha e gerar pdf
 for index, row in planilha_excel.iterrows():
     #gerando recibo em pdf
     pdf_file = canvas.Canvas(f'recibo_atualizado{index}.pdf')
 
-    pdf_file.setFont('Helvetica-Bold', 12)
+    fonte_padrao = 'Helvetica-Bold'
+    tamanho_padrao = 12
+
+    pdf_file.setFont(fonte_padrao, tamanho_padrao)
 
     #inserir logo e assinatura
-    pdf_file.drawImage("logo_bronx_cabecalho.png", 0, 700, width=2*inch, height=2*inch)
+    pdf_file.drawImage("logo_da_empresa_cabecalho_esquerdo.png", 0, 700, width=2*inch, height=2*inch)
 
-    pdf_file.drawImage("assinatura_bronx.jpg", 150, 350, width=3*inch, height=2*inch)
+    pdf_file.drawImage("cabeçalho_lado_direito_informações.png", 300, 700, width=4*inch, height=2*inch)
 
+    pdf_file.drawImage("assinatura_contratante.png", 350, 150, width=2*inch, height=0.5*inch)
+
+    pdf_file.drawImage("assinatura_prestador.png", 60, 140, width=3*inch, height=2*inch)
+   
     # Acessando as informações da planilha
-    pdf_file.drawString(200, 775 - index, f"Recibo de {row['Recibo']}")
-    pdf_file.drawString(125, 675 - index, f"Nome: {row['Nome']}")
-    pdf_file.drawString(125, 625 - index, f"CNPJ: {row['CNPJ']}")
-    pdf_file.drawString(125, 575 - index, f"Data: {row['Data']}")
-    pdf_file.drawString(125, 525 - index, f"Valor: R$ {row['Valor']},00")
+    pdf_file.drawString(200, 650,f"Recibo de {row['Recibo']}")
+    pdf_file.drawString(50, 450, f"Nome: {row['Nome']}")
+    pdf_file.drawString(50, 425, f"CNPJ: {row['CNPJ']}")
+    pdf_file.drawString(50, 400, f"Período: {row['Período']}")
+    valor_sem_decimal = int(row['Valor'])  # Converter o valor para um número inteiro
+    pdf_file.drawString(50, 375, f"Valor: R$ {valor_sem_decimal:,},00")
+
+    
+
+    tamanho_fonte = 10
+    pdf_file.setFont(fonte_padrao, tamanho_fonte)
+
+    pdf_file.drawString(20, 600, f"O prestador de serviço {row['Nome']} de CNPJ {row['CNPJ']}, declara ter recebido de")
+    pdf_file.drawString(20, 580, f"RAZAO SOCIAL DO CONTRATANTE E CNPJ o valor de R$ {valor_sem_decimal:,},00 referente a Prestação de serviço( voce pode descrever qual a prestação")
+    pdf_file.drawString(21, 560, "no período citado abaixo:")
+    
     pdf_file.save()
 
 for indice, row in planilha_excel.iterrows():
 
-    #buscar email na planilha
+    #lendo email na planilha
     email_receiver = row['email']
 
-    #funções para acesso ao outlook
+    #acessando outlook para enviar email
     outlook = win32.Dispatch("Outlook.Application")
     message = outlook.CreateItem(0)
     message.To = email_receiver
-
-    
+        
+    # adicionando indice para seguir sequencia dos emails na planilha
     numero_recibo = indice
     pdf_file = (f'recibo_atualizado{indice}.pdf')
 
     pdf_path = os.path.join(caminho_recibo, pdf_file)
-
+    #conteudo do email
     if os.path.exists(pdf_path):
-        message.Subject = "Recibo"
-        message.Body = "Olá Parceiro, tudo bem?\nSegue o Recibo Referente..."
+        message.Subject = "Recibo de Pagamento"
+        message.Body ='''Olá Parceiro, tudo bem?\n
+    Segue o Recibo Referente a prestação de serviço do Período de dia/mes/ano\n
+    Desde já Agradecemos ✌️\n
+    Abaixo o anexo com o recibo ⬇️'''
+        #anexando recibo pdf
         attachment = message.Attachments.Add(pdf_path)
         message.Send()
     else:
