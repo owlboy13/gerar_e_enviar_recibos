@@ -15,4 +15,4 @@ O código pode ser usado para enviar qualquer outro tipo de arquivo e informaç�
 - envio de imagens de marketing e captação de clientes;
 - envio de contratos em massa;
 - envio de boletos;
-- lembrentes e avisos
+- lembretes e avisos
