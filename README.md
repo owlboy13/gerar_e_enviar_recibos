@@ -1,7 +1,7 @@
 # gerar_e_enviar_recibos.py
 
 # RESUMO
-A ideia desse código é gerar arquivos em formato pdfs baseado em informações de uma planilha, como nome, cnpj, data, valor, logo da contratnnte e assinatura.
+A ideia desse código é gerar arquivos em formato pdfs baseado em informações de uma planilha, como nome, cnpj, data, valor, logomarca do contratante e assinatura.
 Depois de gerar os arquivos, enviar esses mesmos arquivos por email(outlook) de forma sequencial baseado tambem em uma lista de emails na mesma planilha.
 
 O código é divido em duas partes:
