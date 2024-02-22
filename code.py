@@ -16,8 +16,12 @@ print()
 
 
 for index, row in tqdm(planilha_excel.iterrows()):
+
+    #nomeando cada recibo com nome que esta na coluna da planilha
+    name_file = row['Nome']
+
     #gerando recibo em pdf
-    pdf_file = canvas.Canvas(f'recibo_atualizado{index}.pdf')
+    pdf_file = canvas.Canvas(f'{name_file}.pdf')
 
     fonte_padrao = 'Helvetica-Bold'
     tamanho_padrao = 12
@@ -60,7 +64,7 @@ for index, row in tqdm(planilha_excel.iterrows()):
         pdf_file.drawString(22, 560, "Gorjetas no período citado abaixo:")
     
     else:
-        ('Franquia não existe')
+        print('Franquia não existe')
     
     
 
@@ -71,12 +75,12 @@ print()
 print('Antes de confirmar o envio verifique se os recibos estão corretos')
 print()
 
-periodo_email = input( str('Qual o periodo referente as gorjetas?  ')).upper()
+periodo_email = input(str('Qual o periodo referente as gorjetas?  '))
 autoriz_send = input('Posso enviar os e-mails?  ').lower()
 
 
-if autoriz_send == 'sim' or 's':
-    for indice, row in planilha_excel.iterrows():
+if autoriz_send == 'sim' and 's':
+    for indice, row in tqdm(planilha_excel.iterrows()):
 
         #lendo email na planilha
         email_receiver = row['email']
@@ -87,7 +91,7 @@ if autoriz_send == 'sim' or 's':
             
         # adicionando indice para seguir sequencia dos emails na planilha
         numero_recibo = indice
-        pdf_file = (f'recibo_atualizado{indice}.pdf')
+        pdf_file = (f'{name_file}.pdf')
 
         pdf_path = os.path.join(caminho_recibo, pdf_file)
         #conteudo do email
