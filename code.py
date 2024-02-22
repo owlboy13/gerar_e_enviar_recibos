@@ -17,7 +17,7 @@ print()
 
 for index, row in tqdm(planilha_excel.iterrows()):
 
-    #nomeando cada recibo com nome que esta na coluna da planilha
+    #nomeando cada recibo com nome que esta na coluna da
     name_file = row['Nome']
 
     #gerando recibo em pdf
@@ -90,10 +90,10 @@ if autoriz_send == 'sim' and 's':
         message.To = email_receiver
             
         # adicionando indice para seguir sequencia dos emails na planilha
-        numero_recibo = indice
-        pdf_file = (f'{name_file}.pdf')
+        name_excel = row['Nome']
+        pdf_files = (f'{name_excel}.pdf')
 
-        pdf_path = os.path.join(caminho_recibo, pdf_file)
+        pdf_path = os.path.join(caminho_recibo, pdf_files)
         #conteudo do email
         if os.path.exists(pdf_path):
             message.Subject = f"Recibo de Pagamento de Gorjetas - {user_franquia} "
@@ -107,6 +107,7 @@ if autoriz_send == 'sim' and 's':
         else:
             print(f'Arquivo PDF Não encontrado para {email_receiver}: {pdf_file}')
 
-else:
+if not autoriz_send == 'sim' and 's':
     print('Algum problema nos recibos?')
-
+else:
+    print('Envio de emails finalizado')
