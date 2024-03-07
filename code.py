@@ -5,11 +5,20 @@ import win32com.client as win32
 import os
 from tqdm.auto import tqdm
 
+
+name_planilha = input('Digite o nome da planilha aqui e aperte ENTER:  ')
+format_xslx = '.xlsx'
 #lendo arquivo excel
-caminho_planilha = input('digite o nome da planilha aqui:  ') #'dados_bronx.xlsx'
+caminho_planilha = name_planilha + format_xslx 
+
 planilha_excel = pd.read_excel(caminho_planilha)
 #caminho do diretorio dos recibos.pdfs
-caminho_recibo = r'C:\Users\Anderson Luiz\Downloads\Anderson - Importante\Projetos Python\Enviar_Recibos'
+save_recibo = input('Cole aqui o endereço da pasta que deseja salvar os recibos e aperte ENTER:  ')
+
+if os.path.isdir(save_recibo):
+    caminho_recibo = save_recibo
+else:
+    print("O caminho fornecido não é uma pasta válida.")
 print()
 user_franquia = input(str('Qual a Franquia?  ')).upper()
 print()
@@ -106,8 +115,9 @@ if autoriz_send == 'sim' and 's':
             message.Send()
         else:
             print(f'Arquivo PDF Não encontrado para {email_receiver}: {pdf_file}')
-
-if not autoriz_send == 'sim' and 's':
-    print('Algum problema nos recibos?')
+elif autoriz_send == 'sim' and 's':
+    print('Envios de Recibos Finalizados!')
 else:
-    print('Envio de emails finalizado')
+    print('Algum problema nos recibos?')
+
+
