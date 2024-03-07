@@ -12,9 +12,9 @@ format_xslx = '.xlsx'
 caminho_planilha = name_planilha + format_xslx 
 
 planilha_excel = pd.read_excel(caminho_planilha)
+print()
 #caminho do diretorio dos recibos.pdfs
 save_recibo = input('Cole aqui o endereço da pasta que deseja salvar os recibos e aperte ENTER:  ')
-
 if os.path.isdir(save_recibo):
     caminho_recibo = save_recibo
 else:
@@ -85,8 +85,9 @@ print('Antes de confirmar o envio verifique se os recibos estão corretos')
 print()
 
 periodo_email = input(str('Qual o periodo referente as gorjetas?  '))
+print()
 autoriz_send = input('Posso enviar os e-mails?  ').lower()
-
+print()
 
 if autoriz_send == 'sim' and 's':
     for indice, row in tqdm(planilha_excel.iterrows()):
@@ -115,9 +116,9 @@ if autoriz_send == 'sim' and 's':
             message.Send()
         else:
             print(f'Arquivo PDF Não encontrado para {email_receiver}: {pdf_file}')
-elif autoriz_send == 'sim' and 's':
-    print('Envios de Recibos Finalizados!')
 else:
     print('Algum problema nos recibos?')
-
-
+print()
+print('Abra o Outlook e aguarde os emails sairem da caixa de saída')
+print()
+input("Quando o Outlook finalizar, aperte ENTER...")
