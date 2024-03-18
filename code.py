@@ -51,7 +51,7 @@ for index, row in tqdm(planilha_excel.iterrows()):
     #inserir logo e assinatura bronx
     if user_franquia == 'BRONX':
         pdf_file.drawImage("logo_bronx_cabecalho.png", 0, 700, width=2*inch, height=2*inch)
-        pdf_file.drawImage("cabeçalho_lado_direito_bronx.png", 300, 700, width=4*inch, height=2*inch)
+        pdf_file.drawImage("cabeçalho_lado_direito_bronx.png", 305, 700, width=4*inch, height=2*inch)
         pdf_file.drawImage("assinatura_entregador.png", 350, 150, width=2*inch, height=0.5*inch)
         pdf_file.drawImage("assinatura_bronx.jpg", 60, 140, width=3*inch, height=2*inch)
 
@@ -63,7 +63,7 @@ for index, row in tqdm(planilha_excel.iterrows()):
     #assinatura e logo jafhelog
     elif user_franquia == 'JAFHELOG':
         pdf_file.drawImage("logo_jafhelog_cabecalho.png", 0, 700, width=2*inch, height=2*inch)
-        pdf_file.drawImage("cabeçalho_lado_direito_jafhelog.png", 300, 700, width=4*inch, height=2*inch)
+        pdf_file.drawImage("cabeçalho_lado_direito_jafhelog.png", 305, 700, width=3*inch, height=1.5*inch)
         pdf_file.drawImage("assinatura_entregador.png", 350, 150, width=2*inch, height=0.5*inch)
         pdf_file.drawImage("assinatura_jafhe.png", 60, 140, width=3*inch, height=2*inch)
 
@@ -75,9 +75,14 @@ for index, row in tqdm(planilha_excel.iterrows()):
     else:
         print('Franquia não existe')
     
-    
 
     pdf_file.save()
+
+if user_franquia == 'BRONX':
+    rodape = r'https://i.imgur.com/EIoVMgm.png'
+elif user_franquia == 'JAFHELOG':
+    rodape = r'https://i.imgur.com/kkEfrhY.png'
+
 
 #ENVIO DE EMAILS
 print()
@@ -89,7 +94,8 @@ print()
 autoriz_send = input('Posso enviar os e-mails?  ').lower()
 print()
 
-if autoriz_send == 'sim' and 's':
+
+if autoriz_send == 'sim' or autoriz_send == 's':
     for indice, row in tqdm(planilha_excel.iterrows()):
 
         #lendo email na planilha
@@ -107,10 +113,14 @@ if autoriz_send == 'sim' and 's':
         #conteudo do email
         if os.path.exists(pdf_path):
             message.Subject = f"Recibo de Pagamento de Gorjetas - {user_franquia} "
-            message.Body =f'''Olá Parceiro, tudo bem?\n
-        Segue o Recibo Referente às Gorjetas do Período de {periodo_email}\n
-        Equipe {user_franquia} Agradece ✌️\n
-        Abaixo o anexo com o recibo ⬇️'''
+            message.BodyFormat = 2
+            message.HTMLBody = f'''<p>Olá Parceiro, tudo bem?</p>
+            <p>Segue o Recibo Referente às Gorjetas do Período de {periodo_email}</p>    
+            <p>Equipe {user_franquia}</p>
+            <p>Agradecemos sua atenção contínua e confiança em nossa empresa. 🤝 </p>
+            <p>Recibo em Anexo 📎</p>
+            <p><i>Este e-mail é automático e não é necessário respondê-lo</i></p>
+            <img src="{rodape}" alt="Imagem" width="210" height="100">'''
             #anexando recibo pdf
             attachment = message.Attachments.Add(pdf_path)
             message.Send()
